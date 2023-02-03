@@ -47,7 +47,7 @@ public class ProductService {
         if (description != null && description.length() > 0 && !Objects.equals(product.getDescription(), description)) {
             product.setDescription(description);
         }
-
+//sdfafdsd
         if (price != null && !Objects.equals(product.getPrice(), price)) {
             product.setPrice(price);
         }
