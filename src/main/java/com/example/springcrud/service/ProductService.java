@@ -14,29 +14,37 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
-
     public List<ProductEntity> getProducts() {
         return productRepository.findAll();
     }
 
-    public void addNewProduct(ProductEntity product) {
+    public ProductEntity getProductById(Integer productId) {
+        boolean exists = productRepository.existsById(productId);
+        if (!exists) {
+            throw new IllegalStateException("product with id " + productId + " does not exist");
+        }
+        return productRepository.findById(productId).orElseThrow();
+    }
+
+    public ProductEntity addNewProduct(ProductEntity product) {
         Optional<ProductEntity> productOptional = productRepository.findProductByTitle(product.getTitle());
         if (productOptional.isPresent()){
             throw new IllegalStateException("product already exist");
         }
-        productRepository.save(product);
+        return productRepository.save(product);
     }
 
-    public void deleteProduct(Integer productId) {
+    public List<ProductEntity> deleteProduct(Integer productId) {
         boolean exists = productRepository.existsById(productId);
         if (!exists) {
             throw new IllegalStateException("product with id " + productId + " does not exist");
         }
         productRepository.deleteById(productId);
+        return productRepository.findAll();
     }
 
     @Transactional
-    public void updateProduct(Integer productId, String title, String description, Double price) {
+    public ProductEntity updateProduct(Integer productId, String title, String description, Double price) {
         ProductEntity product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalStateException("product with id " + productId + " does not exist"));
 
@@ -47,9 +55,9 @@ public class ProductService {
         if (description != null && description.length() > 0 && !Objects.equals(product.getDescription(), description)) {
             product.setDescription(description);
         }
-
         if (price != null && !Objects.equals(product.getPrice(), price)) {
             product.setPrice(price);
         }
+        return productRepository.save(product);
     }
 }

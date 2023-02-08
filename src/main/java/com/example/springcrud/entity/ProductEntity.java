@@ -3,6 +3,9 @@ package com.example.springcrud.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,4 +19,6 @@ public class ProductEntity {
     private String title;
     private String description;
     private Double price;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
+    private List<CommentEntity> comment = new ArrayList<>();
 }
