@@ -1,5 +1,6 @@
 package com.example.springcrud.controller;
 
+import com.example.springcrud.dto.ProductDto;
 import com.example.springcrud.entity.ProductEntity;
 import com.example.springcrud.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -16,19 +17,19 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<ProductEntity>> getProducts() {
+    public ResponseEntity<List<ProductDto>> getProducts() {
         return ResponseEntity.ok(productService.getProducts());
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<ProductEntity> getProductById(@PathVariable("productId") Integer productId) {
+    public ResponseEntity<ProductDto> getProductById(@PathVariable("productId") Integer productId) {
         return new ResponseEntity<>(productService.getProductById(productId), HttpStatus.CREATED);
     }
 
     @PostMapping("/new")
-    public ResponseEntity<ProductEntity> addNewProduct(@RequestBody ProductEntity product) {
+    public ResponseEntity<ProductDto> addNewProduct(@RequestBody ProductDto product) {
 
-        return new ResponseEntity<ProductEntity>(productService.addNewProduct(product), HttpStatus.CREATED);
+        return new ResponseEntity<ProductDto>(productService.addNewProduct(product), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{productId}")

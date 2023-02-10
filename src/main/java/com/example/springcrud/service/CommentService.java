@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -17,16 +18,23 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final ProductRepository productRepository;
 
-    public List<CommentEntity> getComments() {
-        return commentRepository.findAll();
+    public List<CommentDto> getComments() {
+        return commentRepository.findAll()
+                .stream()
+                .map(comment -> new CommentDto(
+                        comment.getContent(),
+                        comment.getProduct().getId()
+                ))
+                .collect(Collectors.toList());
     }
 
-    public CommentEntity addNewComment(CommentDto commentDto) {
+    public CommentDto addNewComment(CommentDto commentDto) {
         CommentEntity comment = new CommentEntity();
         comment.setContent(commentDto.getContent());
         ProductEntity product = productRepository.getReferenceById(commentDto.getProductId());
         comment.setProduct(product);
-        return commentRepository.save(comment);
+        commentRepository.save(comment);
+        return new CommentDto(comment.getContent(), comment.getProduct().getId());
     }
 
     public List<CommentEntity> deleteComment(Integer commentID) {
