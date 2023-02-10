@@ -1,5 +1,8 @@
 package com.example.springcrud.service;
 
+import com.example.springcrud.dto.CommentDto;
+import com.example.springcrud.dto.ProductDto;
+import com.example.springcrud.entity.CommentEntity;
 import com.example.springcrud.entity.ProductEntity;
 import com.example.springcrud.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,29 +12,69 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
-    public List<ProductEntity> getProducts() {
-        return productRepository.findAll();
+    public List<ProductDto> getProducts() {
+        return productRepository.findAll()
+                .stream()
+                .map(product -> new ProductDto(
+                        product.getId(),
+                        product.getTitle(),
+                        product.getDescription(),
+                        product.getPrice(),
+                        product.getComment()
+                                .stream()
+                                .toList()
+                ))
+                .collect(Collectors.toList());
     }
 
-    public ProductEntity getProductById(Integer productId) {
+//    public ProductEntity getProductById(Integer productId) {
+//        boolean exists = productRepository.existsById(productId);
+//        if (!exists) {
+//            throw new IllegalStateException("product with id " + productId + " does not exist");
+//        }
+//        return productRepository.findById(productId).orElseThrow();
+//    }
+
+    public ProductDto getProductById(Integer productId) {
         boolean exists = productRepository.existsById(productId);
         if (!exists) {
             throw new IllegalStateException("product with id " + productId + " does not exist");
         }
-        return productRepository.findById(productId).orElseThrow();
+        return productRepository.findById(productId)
+                .map(product -> new ProductDto(
+                        product.getId(),
+                        product.getTitle(),
+                        product.getDescription(),
+                        product.getPrice(),
+                        product.getComment()
+                                .stream()
+                                .toList()
+                )).orElseThrow();
     }
 
-    public ProductEntity addNewProduct(ProductEntity product) {
+    public ProductDto addNewProduct(ProductDto productDto) {
+        ProductEntity product = new ProductEntity();
+        product.setTitle(productDto.getTitle());
+        product.setDescription(productDto.getDescription());
+        product.setPrice(productDto.getPrice());
+        product.setComment(productDto.getComment());
         Optional<ProductEntity> productOptional = productRepository.findProductByTitle(product.getTitle());
         if (productOptional.isPresent()){
             throw new IllegalStateException("product already exist");
         }
-        return productRepository.save(product);
+        productRepository.save(product);
+        return new ProductDto(product.getId(),
+                product.getTitle(),
+                productDto.getDescription(),
+                product.getPrice(),
+                product.getComment());
+
     }
 
     public List<ProductEntity> deleteProduct(Integer productId) {

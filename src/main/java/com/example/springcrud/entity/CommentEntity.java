@@ -15,8 +15,7 @@ public class CommentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String content;
-    @JsonIgnore
-    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @ManyToOne()
     @JoinColumn(name = "product_id")
     private ProductEntity product;
 
