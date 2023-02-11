@@ -31,3 +31,4 @@ public class AuthenticationController {
         return new ResponseEntity<>(userService.activateUser(code), HttpStatus.CREATED);
     }
 }
+//
