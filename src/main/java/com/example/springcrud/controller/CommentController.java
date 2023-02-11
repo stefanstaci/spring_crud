@@ -1,8 +1,6 @@
 package com.example.springcrud.controller;
 
 import com.example.springcrud.dto.CommentDto;
-import com.example.springcrud.entity.CommentEntity;
-import com.example.springcrud.entity.ProductEntity;
 import com.example.springcrud.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,9 +20,14 @@ public class CommentController {
         return ResponseEntity.ok(commentService.getComments());
     }
 
+    @GetMapping("/{productId}")
+    public ResponseEntity<List<CommentDto>> getCommentsById(@PathVariable("productId") Integer productId) {
+        return ResponseEntity.ok(commentService.getCommentsById(productId));
+    }
+
     @PostMapping("/new")
     public ResponseEntity<CommentDto> addNewComment(@RequestBody CommentDto commentDto) {
-        return new ResponseEntity<CommentDto>(commentService.addNewComment(commentDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(commentService.addNewComment(commentDto), HttpStatus.CREATED);
     }
 
 //    @DeleteMapping("/{commentId}")
