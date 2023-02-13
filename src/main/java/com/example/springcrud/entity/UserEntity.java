@@ -28,6 +28,11 @@ public class UserEntity implements UserDetails {
     private String activationCode;
     private Boolean isActivated;
 
+    public UserEntity(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(this.role.name()));
