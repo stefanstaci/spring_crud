@@ -1,8 +1,6 @@
 package com.example.springcrud.service;
 
-import com.example.springcrud.dto.CommentDto;
 import com.example.springcrud.dto.ProductDto;
-import com.example.springcrud.entity.CommentEntity;
 import com.example.springcrud.entity.ProductEntity;
 import com.example.springcrud.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +23,7 @@ public class ProductService {
                         product.getId(),
                         product.getTitle(),
                         product.getDescription(),
-                        product.getPrice(),
-                        product.getComment()
-                                .stream()
-                                .toList()
+                        product.getPrice()
                 ))
                 .collect(Collectors.toList());
     }
@@ -42,8 +37,7 @@ public class ProductService {
 //    }
 
     public ProductDto getProductById(Integer productId) {
-        boolean exists = productRepository.existsById(productId);
-        if (!exists) {
+        if (!productRepository.existsById(productId)) {
             throw new IllegalStateException("product with id " + productId + " does not exist");
         }
         return productRepository.findById(productId)
@@ -51,10 +45,7 @@ public class ProductService {
                         product.getId(),
                         product.getTitle(),
                         product.getDescription(),
-                        product.getPrice(),
-                        product.getComment()
-                                .stream()
-                                .toList()
+                        product.getPrice()
                 )).orElseThrow();
     }
 
@@ -63,17 +54,17 @@ public class ProductService {
         product.setTitle(productDto.getTitle());
         product.setDescription(productDto.getDescription());
         product.setPrice(productDto.getPrice());
-        product.setComment(productDto.getComment());
         Optional<ProductEntity> productOptional = productRepository.findProductByTitle(product.getTitle());
         if (productOptional.isPresent()){
             throw new IllegalStateException("product already exist");
         }
         productRepository.save(product);
-        return new ProductDto(product.getId(),
+        return new ProductDto(
+                product.getId(),
                 product.getTitle(),
                 productDto.getDescription(),
-                product.getPrice(),
-                product.getComment());
+                product.getPrice()
+                );
 
     }
 

@@ -28,6 +28,19 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
+    public List<CommentDto> getCommentsById(Integer productId) {
+        if (productRepository.findById(productId).isEmpty()){
+            throw new IllegalStateException("product with id " + productId + " does not exist");
+        }
+        return commentRepository.findAllByProductId(productId)
+                .stream()
+                .map(comment -> new CommentDto(
+                        comment.getContent(),
+                        comment.getProduct().getId()
+                ))
+                .collect(Collectors.toList());
+    }
+
     public CommentDto addNewComment(CommentDto commentDto) {
         CommentEntity comment = new CommentEntity();
         comment.setContent(commentDto.getContent());
